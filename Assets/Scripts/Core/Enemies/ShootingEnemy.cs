@@ -1,5 +1,6 @@
 ﻿using Pooling;
 using UnityEngine;
+using Utils;
 
 namespace Core.Enemies
 {
@@ -36,8 +37,7 @@ namespace Core.Enemies
             _nextAttackTime = Time.time + shootDelay;
             
             var projectile = PoolManager.Spawn(projectilePrefab, shootPoint.position, Quaternion.identity);
-            var dir = (PlayerTransform.position - transform.position).normalized;
-            dir.y = 0;
+            var dir = transform.NormalizedDirectionTo(PlayerTransform);
             projectile.SetSpeedAndDir(dir, projectileSpeed);
             projectile.SetDamageData(new DamageData
             {

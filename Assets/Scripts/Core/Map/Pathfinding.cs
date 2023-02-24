@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 using Zenject;
 
 namespace Core.Map
@@ -8,6 +9,7 @@ namespace Core.Map
     public class Pathfinding
     {
         private readonly MapGrid _mapGrid;
+        private CellNode[,] _grid;
 
         [Inject]
         private Pathfinding(MapGrid mapGrid)
@@ -16,7 +18,7 @@ namespace Core.Map
         }
 
         private Vector3 _raycastOffset = new (0, 0.25f, 0);
-        private readonly LayerMask _playerLayer = 1 << 6;
+        private readonly LayerMask _defaultLayerMask = 1 << 0;
         private readonly RaycastHit[] _results = new RaycastHit[3];
         
         public Vector3[] FindPath(Vector3 startWorldPosition, Vector3 targetWorldPosition)
@@ -24,18 +26,19 @@ namespace Core.Map
             // Checking the direct path to the player
             var ray = new Ray(
                 startWorldPosition + _raycastOffset, 
-                (targetWorldPosition - startWorldPosition).normalized);
-            if (Physics.RaycastNonAlloc(ray, _results, float.MaxValue, _playerLayer) == 1)
+                startWorldPosition.NormalizedDirectionTo(targetWorldPosition).normalized);
+            if (Physics.RaycastNonAlloc(ray, _results, float.MaxValue, _defaultLayerMask) == 1)
             {
                 return new []{ targetWorldPosition };
             }
             
+            _grid = _mapGrid.Grid;
             var startCellPos = _mapGrid.GetCellPositionByWorldPosition(startWorldPosition);
             var targetCellPos = _mapGrid.GetCellPositionByWorldPosition(targetWorldPosition);
 
             if (!_mapGrid.CheckPositionOnGrid(startCellPos) || !_mapGrid.CheckPositionOnGrid(targetCellPos) ||
-                !_mapGrid.Grid[startCellPos.x, startCellPos.y].IsWalkable ||
-                !_mapGrid.Grid[targetCellPos.x, targetCellPos.y].IsWalkable)
+                !_grid[startCellPos.x, startCellPos.y].IsWalkable ||
+                !_grid[targetCellPos.x, targetCellPos.y].IsWalkable)
             {
                 return Array.Empty<Vector3>();
             }
@@ -43,7 +46,7 @@ namespace Core.Map
             var openList = new List<CellNode>();
             var closedList = new List<CellNode>();
             
-            openList.Add(_mapGrid.Grid[startCellPos.x, startCellPos.y]);
+            openList.Add(_grid[startCellPos.x, startCellPos.y]);
 
             var isPathFounded = false;
             
@@ -77,7 +80,7 @@ namespace Core.Map
             var path = Array.Empty<Vector3>();
             if (isPathFounded)
             {
-                path = RetracePath(_mapGrid.Grid[startCellPos.x, startCellPos.y], _mapGrid.Grid[targetCellPos.x, targetCellPos.y]);
+                path = RetracePath(_grid[startCellPos.x, startCellPos.y], _grid[targetCellPos.x, targetCellPos.y]);
             }
 
             return path;
@@ -103,21 +106,21 @@ namespace Core.Map
             var neighbors = new List<CellNode>();
             var nodeGridPos = node.GridPosition;
 
-            if (nodeGridPos.y - 1 >= 0) neighbors.Add(_mapGrid.Grid[nodeGridPos.x, nodeGridPos.y - 1]);
-            if (nodeGridPos.y + 1 < _mapGrid.GridSizeY) neighbors.Add(_mapGrid.Grid[nodeGridPos.x, nodeGridPos.y + 1]);
+            if (nodeGridPos.y - 1 >= 0) neighbors.Add(_grid[nodeGridPos.x, nodeGridPos.y - 1]);
+            if (nodeGridPos.y + 1 < _mapGrid.GridSizeY) neighbors.Add(_grid[nodeGridPos.x, nodeGridPos.y + 1]);
             
             if (nodeGridPos.x - 1 >= 0)
             {
-                if (nodeGridPos.y - 1 >= 0) neighbors.Add(_mapGrid.Grid[nodeGridPos.x - 1, nodeGridPos.y - 1]);
-                if (nodeGridPos.y + 1 < _mapGrid.GridSizeY) neighbors.Add(_mapGrid.Grid[nodeGridPos.x - 1, nodeGridPos.y + 1]);
-                neighbors.Add(_mapGrid.Grid[nodeGridPos.x - 1, nodeGridPos.y]);
+                if (nodeGridPos.y - 1 >= 0) neighbors.Add(_grid[nodeGridPos.x - 1, nodeGridPos.y - 1]);
+                if (nodeGridPos.y + 1 < _mapGrid.GridSizeY) neighbors.Add(_grid[nodeGridPos.x - 1, nodeGridPos.y + 1]);
+                neighbors.Add(_grid[nodeGridPos.x - 1, nodeGridPos.y]);
             }
 
             if (nodeGridPos.x + 1 < _mapGrid.GridSizeX)
             {
-                if (nodeGridPos.y - 1 >= 0) neighbors.Add(_mapGrid.Grid[nodeGridPos.x + 1, nodeGridPos.y - 1]);
-                if (nodeGridPos.y + 1 < _mapGrid.GridSizeY) neighbors.Add(_mapGrid.Grid[nodeGridPos.x + 1, nodeGridPos.y + 1]);
-                neighbors.Add(_mapGrid.Grid[nodeGridPos.x + 1, nodeGridPos.y]);
+                if (nodeGridPos.y - 1 >= 0) neighbors.Add(_grid[nodeGridPos.x + 1, nodeGridPos.y - 1]);
+                if (nodeGridPos.y + 1 < _mapGrid.GridSizeY) neighbors.Add(_grid[nodeGridPos.x + 1, nodeGridPos.y + 1]);
+                neighbors.Add(_grid[nodeGridPos.x + 1, nodeGridPos.y]);
             }
 
             return neighbors;

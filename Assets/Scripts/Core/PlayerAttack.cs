@@ -1,6 +1,7 @@
 using Core.Enemies;
 using Pooling;
 using UnityEngine;
+using Utils;
 using Zenject;
 
 namespace Core
@@ -81,8 +82,8 @@ namespace Core
         {
             var direction = _target == null 
                 ? transform.forward 
-                : (_target.position - transform.position).normalized;
-            direction.y = 0;
+                : transform.NormalizedDirectionTo(_target);
+            
             var projectile = PoolManager.Spawn(projectilePrefab, shootPosition.position, Quaternion.identity);
             
             projectile.SetSpeedAndDir(direction, projectileSpeed);

@@ -70,6 +70,7 @@ namespace Core.Enemies
                 i.OnDeath -= HandleEnemyDeath;
                 PoolManager.Despawn(i);
             }
+            _spawnedEnemies.Clear();
         }
 
         private void HandleEnemyDeath(Entity e)
