@@ -38,8 +38,7 @@ namespace Core.Enemies
 
         private void OnDestroy()
         {
-            _gameStateManager.OnUpdateRoom -= SpawnNewEnemies;
-            _gameStateManager.OnDefeat -= DespawnAll;
+            OnEnemiesEliminated = null;
         }
 
         public void SpawnNewEnemies()

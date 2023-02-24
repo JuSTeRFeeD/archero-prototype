@@ -33,7 +33,7 @@ namespace Core.Map
             var grid = _mapGrid.Grid;
             for (var x = 1; x < _mapGrid.GridSizeX - 1; x++)
             {
-                for (var y = 1; y < _mapGrid.GridSizeY - 1; y++)
+                for (var y = 2; y < _mapGrid.GridSizeY - 2; y++)
                 {
                     if (!grid[x, y].IsSpawnablePosition) continue;
                     var xPos = rndOffsetX + (float)x / _mapGrid.GridSizeX * perlinScale;

@@ -25,7 +25,6 @@ namespace Core
         
         public event Action OnPlayerFinish;
 
-
         private void Start()
         {
             _initGatesPosY = model.position.y;
@@ -33,6 +32,12 @@ namespace Core
             _gameStateManager.OnUpdateRoom += () => SetOpened(false);
             _gameStateManager.OnUpdateRoom += UpdateRoomNumber;
             UpdateRoomNumber();
+        }
+        
+        private void OnDestroy()
+        {
+            _sequence.Kill();
+            OnPlayerFinish = null;
         }
 
         private void UpdateRoomNumber()
@@ -46,11 +51,6 @@ namespace Core
             _sequence = DOTween.Sequence()
                 .Append(model.DOMoveY(_isOpened ? openedGatesYPos : _initGatesPosY, 1f))
                 .SetEase(Ease.InBack);
-        }
-
-        private void OnDestroy()
-        {
-            _sequence.Kill();
         }
 
         private void OnTriggerEnter(Collider other)

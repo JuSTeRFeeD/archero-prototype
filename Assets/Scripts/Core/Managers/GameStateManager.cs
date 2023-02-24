@@ -29,16 +29,34 @@ namespace Core.Managers
 
         private void Start()
         {
-            _playerMovement.GetComponent<Entity>().OnDeath += _ => HandlePlayerDeath();
-            gates.OnPlayerFinish += () => StartCoroutine(nameof(StartUpdateRoom));
+            ResetPlayerAndCameraPosition();
+            _playerMovement.GetComponent<Entity>().OnDeath += HandlePlayerDeath;
+            gates.OnPlayerFinish += UpdateRoom;
         }
 
-        private void HandlePlayerDeath()
+        private void OnDestroy()
+        {
+            OnDefeat = null;
+            OnUpdateRoom = null;
+        }
+
+        private void HandlePlayerDeath(Entity e)
         {
             IsGameOver = true;
             OnDefeat?.Invoke();
         }
 
+        private void ResetPlayerAndCameraPosition()
+        {
+            _playerMovement.transform.position = _mapGrid.PlayerSpawnPosition;
+            followCamera.transform.position = _playerMovement.transform.position;
+        }
+
+        private void UpdateRoom()
+        {
+            StartCoroutine(nameof(StartUpdateRoom));
+        }
+        
         private IEnumerator StartUpdateRoom()
         {
             if (IsGameOver) yield break;
@@ -47,8 +65,7 @@ namespace Core.Managers
             
             yield return new WaitForSeconds(SceneLoader.FadeTime);
             
-            _playerMovement.transform.position = _mapGrid.GetPlayerSpawnPosition();
-            followCamera.transform.position = _playerMovement.transform.position;
+            ResetPlayerAndCameraPosition();
             RoomNumber++;
             OnUpdateRoom?.Invoke();
             

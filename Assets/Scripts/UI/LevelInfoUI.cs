@@ -20,6 +20,12 @@ namespace UI
             UpdateInfo();
         }
 
+        private void OnDestroy()
+        {
+            _gameStats.OnExpUpdate -= UpdateInfo;
+            _gameStats.OnLevelUp -= UpdateInfo;
+        }
+
         private void UpdateInfo()
         {
             level.text = $"Lv.{_gameStats.CurrentLevel}";

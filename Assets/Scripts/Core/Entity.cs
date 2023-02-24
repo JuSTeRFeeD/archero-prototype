@@ -29,6 +29,12 @@ namespace Core
             ResetHealth();
         }
 
+        private void OnDestroy()
+        {
+            OnDeath = null;
+            OnHealthChange = null;
+        }
+
         private void ResetHealth()
         {
             _currentHealth = health;

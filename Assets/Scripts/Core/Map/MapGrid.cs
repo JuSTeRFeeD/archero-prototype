@@ -13,20 +13,19 @@ namespace Core.Map
 #endif
         [SerializeField, Min(5)] private int gridSizeX = 11;
         [SerializeField, Min(7)] private int gridSizeY = 15;
-        [Space]
-        [SerializeField] private Vector2Int playerSpawnPosition = new (5, 3);
 
         private const float CellSize = 1;
         private static float HalfCell => CellSize / 2;
         public int GridSizeX => gridSizeX;
         public int GridSizeY => gridSizeY;
+        public Vector3 PlayerSpawnPosition => transform.position + new Vector3((float)gridSizeX / 2, 0, 2);
 
         public CellNode[,] Grid { get; private set; }
 
         private void Awake()
         {
 #if DEBUG
-            if (!CheckPositionOnGrid(playerSpawnPosition))
+            if (!CheckPositionOnGrid(GetCellPositionByWorldPosition(PlayerSpawnPosition)))
                 Debug.LogError("Incorrect Player Spawn Position (out of grid bounds)!");
 #endif
             GenerateGrid();
@@ -53,7 +52,8 @@ namespace Core.Map
 
         private void AvoidSpawnObstaclesNearPlayerSpawn()
         {
-            Grid[playerSpawnPosition.x, playerSpawnPosition.y].IsLockedToSpawn = true;
+            var playerSpawnPos = GetCellPositionByWorldPosition(PlayerSpawnPosition);
+            Grid[playerSpawnPos.x, playerSpawnPos.y].IsLockedToSpawn = true;
             var directions = new List<Vector2Int>
             {
                 new(0, 1),
@@ -67,7 +67,7 @@ namespace Core.Map
             };
             foreach (var i in directions)
             {
-                Grid[playerSpawnPosition.x + i.x, playerSpawnPosition.y + i.y].IsLockedToSpawn = true;
+                Grid[playerSpawnPos.x + i.x, playerSpawnPos.y + i.y].IsLockedToSpawn = true;
             }
         }
 
@@ -92,11 +92,6 @@ namespace Core.Map
             return result;
         }
         
-        public Vector3 GetPlayerSpawnPosition()
-        {
-            return GetWorldPositionByCellPosition(playerSpawnPosition);
-        }
-
         public Vector2Int GetCellPositionByWorldPosition(Vector3 worldPosition)
         {
             worldPosition -= transform.position;
@@ -126,6 +121,8 @@ namespace Core.Map
             //         Gizmos.DrawSphere(path[i], 0.5f);
             //     }
             // }
+            
+            var playerSpawnPos = GetCellPositionByWorldPosition(PlayerSpawnPosition);
 
             if (!drawGrid) return;
             
@@ -133,7 +130,7 @@ namespace Core.Map
             {
                 for (var y = 0; y < gridSizeY; y++)
                 {
-                    if (playerSpawnPosition.x == x && playerSpawnPosition.y == y)
+                    if (playerSpawnPos.x == x && playerSpawnPos.y == y)
                     {
                         Gizmos.color = Color.yellow;
                         Gizmos.DrawCube(GetWorldPositionByCellPosition(new Vector2Int(x, y)) + Vector3.up * 0.1f, size);
