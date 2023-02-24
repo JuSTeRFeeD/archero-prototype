@@ -92,11 +92,6 @@ namespace Core.Map
             return result;
         }
         
-        public Vector3 GetObstacleSpawnPosition() // TODO: add logic
-        {
-            throw new NotImplementedException();
-        }
-
         public Vector3 GetPlayerSpawnPosition()
         {
             return GetWorldPositionByCellPosition(playerSpawnPosition);
