@@ -15,7 +15,8 @@ namespace Core.Managers
         [SerializeField] private FollowCamera followCamera;
         [SerializeField] private Gates gates;
         
-        public bool IsPaused { get; private set; } = false;
+        public bool IsPaused { get; private set; }
+        public bool IsGameOver { get; private set; }
         public int RoomNumber { get; private set; } = 1;
         public event Action OnUpdateRoom;
         public event Action OnDefeat;
@@ -34,12 +35,14 @@ namespace Core.Managers
 
         private void HandlePlayerDeath()
         {
+            IsGameOver = true;
             OnDefeat?.Invoke();
-            SetPause(true);
         }
 
         private IEnumerator StartUpdateRoom()
         {
+            if (IsGameOver) yield break;
+            
             _sceneLoader.SetActiveFade(true);
             
             yield return new WaitForSeconds(SceneLoader.FadeTime);

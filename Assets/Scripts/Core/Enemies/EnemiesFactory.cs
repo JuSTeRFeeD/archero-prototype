@@ -59,10 +59,11 @@ namespace Core.Enemies
         private void HandleEnemyDeath(Entity e)
         {
             e.OnDeath -= HandleEnemyDeath;
+            _spawnedEnemies.Remove(e as BasicEnemy);
+
+            if (_gameStateManager.IsGameOver) return; 
             
             _gameStats.AddExp(10);
-            
-            _spawnedEnemies.Remove(e as BasicEnemy);
             if (_spawnedEnemies.Count == 0)
             {
                 OnEnemiesEliminated?.Invoke();

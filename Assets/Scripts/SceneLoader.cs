@@ -9,13 +9,14 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private Image fadeImage;
 
     public const float FadeTime = 0.5f;
-    private bool _isLoading;
+    private bool _isLoadingScene;
 
     private Sequence _sequence;
 
     public void SetActiveFade(bool value)
     {
-        if (_isLoading) return;
+        if (_isLoadingScene) return;
+        _sequence.Kill();
         _sequence = DOTween.Sequence()
             .Append(fadeImage.DOFade(value ? 1 : 0, FadeTime))
             .SetEase(Ease.InOutCubic)
@@ -35,13 +36,13 @@ public class SceneLoader : MonoBehaviour
     private IEnumerator Load(string sceneName)
     {
         SetActiveFade(true);
-        _isLoading = true;
+        _isLoadingScene = true;
         
         Time.timeScale = 1;
         yield return new WaitForSeconds(FadeTime);
         yield return SceneManager.LoadSceneAsync(sceneName);
         
-        _isLoading = false;
+        _isLoadingScene = false;
         SetActiveFade(false);
     }
 }

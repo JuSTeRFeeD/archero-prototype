@@ -30,7 +30,7 @@ namespace Core.Managers
             {
                 CurrentLevel++;
                 CurrentExp -= ToLevelUpExp;
-                ToLevelUpExp += 30; // TODO: to global constance or smth like
+                ToLevelUpExp += 30; // TODO: to global constants?
                 OnLevelUp?.Invoke();
             }
             OnExpUpdate?.Invoke();

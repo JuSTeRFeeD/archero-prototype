@@ -1,7 +1,6 @@
 using System;
 using Pooling;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Core
 {
@@ -54,6 +53,7 @@ namespace Core
             
             if (_currentHealth <= 0)
             {
+                _currentHealth = 0;
                 OnDeath?.Invoke(this);
                 if (deathEffect != null)
                 {
