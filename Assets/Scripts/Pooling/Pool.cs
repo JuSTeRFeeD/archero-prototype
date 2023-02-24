@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace Pooling
         public GameObject Prefab { get; private set; }
         public Transform PoolItemsContainer { get; private set; }
         
-        private readonly List<Poolable> _pooledItems = new(10);
+        public readonly List<Poolable> PooledItems = new(10);
 
         private bool _isInitialized;
         
@@ -24,13 +25,18 @@ namespace Pooling
         
         public Poolable GetFreeItem()
         {
-            if (_pooledItems.Count > 0)
+            if (PooledItems.Count > 0)
             {
-                var item = _pooledItems[0];
-                _pooledItems.RemoveAt(0);
+                var item = PooledItems[0];
+                PooledItems.RemoveAt(0);
                 return item;
             }
             return InstantiateNewItem();
+        }
+
+        private void OnDestroy()
+        {
+            PoolManager.DestroyPool(this);
         }
 
         private Poolable InstantiateNewItem()
@@ -59,7 +65,7 @@ namespace Pooling
 #endif
                 return;
             }
-            _pooledItems.Remove(item);
+            PooledItems.Remove(item);
         }
 
         public void IncludeItem(Poolable item)
@@ -71,7 +77,7 @@ namespace Pooling
 #endif
                 return;
             }
-            _pooledItems.Add(item);
+            PooledItems.Add(item);
         }
     }
 }

@@ -90,5 +90,15 @@ namespace Pooling
             transform.SetParent(parent, worldPositionStays);
             transform.SetPositionAndRotation(position, rotation);
         }
+
+        public static void DestroyPool(Pool pool)
+        {
+            foreach (var i in pool.PooledItems)
+            {
+                Object.Destroy(i.gameObject);
+            }
+            Object.Destroy(pool.gameObject);
+            Pools.Remove(pool);
+        }
     }
 }
