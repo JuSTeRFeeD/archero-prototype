@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Core
 {
-    [RequireComponent(typeof(Canvas))]
+    [DisallowMultipleComponent, RequireComponent(typeof(Canvas))]
     public class LookAtCamera : MonoBehaviour
     {
         private Transform _mainCameraTransform;

@@ -3,6 +3,5 @@
     public enum SkillType
     {
         UpgradeStat,
-        DoublesShoot,
     }
 }

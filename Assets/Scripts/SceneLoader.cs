@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public class SceneLoader : MonoBehaviour
 {
     [SerializeField] private Image fadeImage;

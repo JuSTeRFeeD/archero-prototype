@@ -16,12 +16,12 @@ namespace Core
         private Animator _animator;
         private static readonly int AttackAnim = Animator.StringToHash("attack");
         private static readonly int AttackSpeedAmin = Animator.StringToHash("attackSpeed");
+        private const float BasicAttackSpeedAnimation = 0.5f;
 
         [Space]
         [SerializeField] private Transform shootPosition;
         [SerializeField] private Projectile projectilePrefab;
         [SerializeField] private float attackCooldown = 3;
-        private const float BasicAttackSpeed = 0.5f;
         private float _nextAttackTime;
 
         [SerializeField] private int damage = 10;
@@ -76,7 +76,7 @@ namespace Core
             if (_target == null || Time.time < _nextAttackTime) return;
 
             _nextAttackTime = Time.time + attackCooldown;
-            _animator.SetFloat(AttackSpeedAmin, BasicAttackSpeed / attackCooldown);
+            _animator.SetFloat(AttackSpeedAmin, BasicAttackSpeedAnimation / attackCooldown);
             _animator.SetTrigger(AttackAnim);
         }
         

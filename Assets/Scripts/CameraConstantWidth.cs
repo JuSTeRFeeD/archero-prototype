@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Camera))]
+[DisallowMultipleComponent, RequireComponent(typeof(Camera))]
 public class CameraConstantWidth : MonoBehaviour
 {
     public float minOrthographicSize = 10;

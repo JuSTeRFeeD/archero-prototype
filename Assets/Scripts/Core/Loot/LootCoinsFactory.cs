@@ -5,10 +5,12 @@ using Zenject;
 
 namespace Core.Loot
 {
+    [DisallowMultipleComponent]
     public class LootCoinsFactory : MonoBehaviour
     {
         [Inject] private PlayerMovement _player;
         [Inject] private GameStats _gameStats;
+        
         [SerializeField] private DropCoin coinPrefab;
 
         public void SpawnCoins(int count, Vector3 position)

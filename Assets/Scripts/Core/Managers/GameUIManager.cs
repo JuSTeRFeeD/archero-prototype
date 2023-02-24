@@ -5,6 +5,7 @@ using Zenject;
 
 namespace Core.Managers
 {
+    [DisallowMultipleComponent]
     public class GameUIManager : MonoBehaviour
     {
         [Inject] private SceneLoader _sceneLoader;

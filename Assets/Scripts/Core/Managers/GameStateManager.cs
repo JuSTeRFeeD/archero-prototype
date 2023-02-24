@@ -18,15 +18,10 @@ namespace Core.Managers
         public bool IsPaused { get; private set; }
         public bool IsGameOver { get; private set; }
         public int RoomNumber { get; private set; } = 1;
+        
         public event Action OnUpdateRoom;
         public event Action OnDefeat;
         
-        public void SetPause(bool value)
-        {
-            IsPaused = value;
-            Time.timeScale = IsPaused ? 0 : 1;
-        }
-
         private void Start()
         {
             ResetPlayerAndCameraPosition();
@@ -38,6 +33,12 @@ namespace Core.Managers
         {
             OnDefeat = null;
             OnUpdateRoom = null;
+        }
+        
+        public void SetPause(bool value)
+        {
+            IsPaused = value;
+            Time.timeScale = IsPaused ? 0 : 1;
         }
 
         private void HandlePlayerDeath(Entity e)

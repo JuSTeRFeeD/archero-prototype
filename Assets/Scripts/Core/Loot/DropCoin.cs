@@ -8,6 +8,7 @@ namespace Core.Loot
     {
         private const float CollectSpeed = 12f;
         private const float DistanceToCollect = 1.25f;
+        
         private Transform _player;
         private LootCoinsFactory _coinsFactory;
 

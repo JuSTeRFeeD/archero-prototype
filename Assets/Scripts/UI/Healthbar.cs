@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
+    [DisallowMultipleComponent]
     public class Healthbar : MonoBehaviour
     {
         [SerializeField] private Entity entity;

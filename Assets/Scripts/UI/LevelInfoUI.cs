@@ -6,6 +6,7 @@ using Zenject;
 
 namespace UI
 {
+    [DisallowMultipleComponent]
     public class LevelInfoUI : MonoBehaviour
     {
         [Inject] private GameStats _gameStats;
