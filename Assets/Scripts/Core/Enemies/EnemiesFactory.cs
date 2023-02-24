@@ -33,6 +33,13 @@ namespace Core.Enemies
         {
             SpawnNewEnemies();
             _gameStateManager.OnUpdateRoom += SpawnNewEnemies;
+            _gameStateManager.OnDefeat += DespawnAll;
+        }
+
+        private void OnDestroy()
+        {
+            _gameStateManager.OnUpdateRoom -= SpawnNewEnemies;
+            _gameStateManager.OnDefeat -= DespawnAll;
         }
 
         public void SpawnNewEnemies()
@@ -53,6 +60,15 @@ namespace Core.Enemies
 
                 enemy.OnDeath += HandleEnemyDeath;
                 _spawnedEnemies.Add(enemy);
+            }
+        }
+
+        private void DespawnAll()
+        {
+            foreach (var i in _spawnedEnemies)
+            {
+                i.OnDeath -= HandleEnemyDeath;
+                PoolManager.Despawn(i);
             }
         }
 
