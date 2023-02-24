@@ -28,8 +28,14 @@ namespace Core.Managers
 
         private void Start()
         {
-            _playerMovement.GetComponent<Entity>().OnDeath += _ => OnDefeat?.Invoke();
+            _playerMovement.GetComponent<Entity>().OnDeath += _ => HandlePlayerDeath();
             gates.OnPlayerFinish += () => StartCoroutine(nameof(StartUpdateRoom));
+        }
+
+        private void HandlePlayerDeath()
+        {
+            OnDefeat?.Invoke();
+            SetPause(true);
         }
 
         private IEnumerator StartUpdateRoom()

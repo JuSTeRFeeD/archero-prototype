@@ -1,3 +1,4 @@
+using System;
 using Pooling;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,8 +19,8 @@ namespace Core
 
         public bool IsAlive => _currentHealth > 0;
 
-        public UnityAction<Entity> OnDeath;
-        public UnityAction<Entity> OnHealthChange;
+        public event Action<Entity> OnDeath;
+        public event Action<Entity> OnHealthChange;
 
         public float HealthPercent => (float)_currentHealth / health;
         public float HealthAmount => _currentHealth;
@@ -34,7 +35,7 @@ namespace Core
             _currentHealth = health;
             OnHealthChange?.Invoke(this);
         }
-        
+
         /// <summary>
         /// Deal damage to current entity
         /// </summary>

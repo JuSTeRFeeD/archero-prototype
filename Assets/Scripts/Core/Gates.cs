@@ -21,8 +21,10 @@ namespace Core
 
         private bool _isOpened = true;
         private float _initGatesPosY;
+        private Sequence _sequence;
         
-        public event Action OnPlayerFinish; 
+        public event Action OnPlayerFinish;
+
 
         private void Start()
         {
@@ -41,7 +43,14 @@ namespace Core
         private void SetOpened(bool value)
         {
             _isOpened = value;
-            model.DOMoveY(_isOpened ? openedGatesYPos : _initGatesPosY, 1f).SetEase(Ease.InBack);
+            _sequence = DOTween.Sequence()
+                .Append(model.DOMoveY(_isOpened ? openedGatesYPos : _initGatesPosY, 1f))
+                .SetEase(Ease.InBack);
+        }
+
+        private void OnDestroy()
+        {
+            _sequence.Kill();
         }
 
         private void OnTriggerEnter(Collider other)
