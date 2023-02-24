@@ -24,12 +24,12 @@ namespace Core
         public float HealthPercent => (float)_currentHealth / health;
         public float HealthAmount => _currentHealth;
 
-        private void Awake()
+        private void OnEnable()
         {
             ResetHealth();
         }
 
-        public void ResetHealth()
+        private void ResetHealth()
         {
             _currentHealth = health;
             OnHealthChange?.Invoke(this);

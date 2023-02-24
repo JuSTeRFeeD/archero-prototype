@@ -8,13 +8,13 @@ public class SceneLoader : MonoBehaviour
 {
     [SerializeField] private Image fadeImage;
 
-    private const float FadeTime = 0.25f;
+    public const float FadeTime = 0.5f;
     private bool _isLoading;
         
     public void SetActiveFade(bool value)
     {
         if (_isLoading) return;
-        fadeImage.DOFade(value ? 1 : 0, FadeTime).SetEase(Ease.InOutCubic);
+        fadeImage.DOFade(value ? 1 : 0, FadeTime).SetEase(Ease.InOutCubic).SetUpdate(true);
     }
 
     public void LoadScene(string sceneName)
@@ -27,6 +27,7 @@ public class SceneLoader : MonoBehaviour
         SetActiveFade(true);
         _isLoading = true;
         
+        Time.timeScale = 1;
         yield return new WaitForSeconds(FadeTime);
         yield return SceneManager.LoadSceneAsync(sceneName);
         

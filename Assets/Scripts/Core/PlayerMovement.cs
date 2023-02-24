@@ -2,11 +2,11 @@
 
 namespace Core
 {
-    [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(Rigidbody))]
     public class PlayerMovement : MonoBehaviour
     {
         [SerializeField] private Joystick joystick;
-        private CharacterController _controller;
+        private Rigidbody _rb;
 
         [Space]
         public float movementSpeed = 2f;
@@ -21,26 +21,32 @@ namespace Core
         
         private void Start()
         {
-            _controller = GetComponent<CharacterController>();
+            _rb = GetComponent<Rigidbody>();
             _animator = GetComponent<Animator>();
         }
 
         private void Update()
         {
             _animator.SetBool(IsWalkAnim, joystick.Direction != Vector2.zero);
-            if (joystick.Direction == Vector2.zero) return;
+            if (joystick.Direction == Vector2.zero)
+            {
+                _inputDir = Vector3.zero;
+                return;
+            }
             
-            var dt = Time.deltaTime;
             var joystickDirection = joystick.Direction.normalized;
             
             _inputDir = new Vector3(joystickDirection.x, 0, joystickDirection.y); 
-            _controller.Move(_inputDir * (movementSpeed * dt));
-            
             var toRotation = Quaternion.LookRotation(_inputDir, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 toRotation, 
-                RotationSpeed * dt);
+                RotationSpeed * Time.deltaTime);
+        }
+
+        private void FixedUpdate()
+        {
+            _rb.velocity = _inputDir * movementSpeed;
         }
     }
 }

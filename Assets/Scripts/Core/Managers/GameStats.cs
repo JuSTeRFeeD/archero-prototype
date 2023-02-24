@@ -9,17 +9,18 @@ namespace Core.Managers
         public int ToLevelUpExp { get; private set; }
         public int CollectedCoins { get; private set; }
 
-        public float GetLevelProgress => (float)CurrentLevel / ToLevelUpExp;
+        public float ProgressPercent => (float)CurrentExp / ToLevelUpExp;
 
         public event Action OnLevelUp; 
+        public event Action OnExpUpdate; 
         public event Action OnCoinsUpdate; 
 
         public GameStats()
         {
-            CurrentExp = 0;
-            ToLevelUpExp = 10;
-            ToLevelUpExp = 10;
             CollectedCoins = 0;
+            CurrentLevel = 1;
+            CurrentExp = 0;
+            ToLevelUpExp = 30;
         }
 
         public void AddExp(int amount)
@@ -29,9 +30,10 @@ namespace Core.Managers
             {
                 CurrentLevel++;
                 CurrentExp -= ToLevelUpExp;
-                ToLevelUpExp += 10; // TODO: to global constance or smth like
+                ToLevelUpExp += 30; // TODO: to global constance or smth like
                 OnLevelUp?.Invoke();
             }
+            OnExpUpdate?.Invoke();
         }
 
         public void AddCoins(int amount)

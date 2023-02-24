@@ -76,7 +76,7 @@ namespace Core
             _animator.SetTrigger(AttackAnim);
         }
         
-        // Invoke from attack animation
+        // Invokes from attack animation
         private void Attack()
         {
             var direction = _target == null 

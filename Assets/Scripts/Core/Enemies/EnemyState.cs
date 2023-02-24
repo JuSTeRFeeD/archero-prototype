@@ -2,7 +2,7 @@
 {
     public enum EnemyState
     {
-        Attack,
-        Walk
+        Idle,
+        Moving,
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using Pooling;
 using UnityEngine;
 
@@ -6,9 +7,24 @@ namespace Core
     [DisallowMultipleComponent]
     public class Projectile : Poolable
     {
+        [SerializeField] private TrailRenderer trailRenderer;
+        
         private DamageData _damageData;
         private float _speed;
         private Vector3 _direction;
+
+        private void OnEnable()
+        {
+            StartCoroutine(nameof(ClearTail));
+        }
+
+        private IEnumerator ClearTail()
+        {
+            trailRenderer.Clear();
+            trailRenderer.emitting = false;
+            yield return new WaitForEndOfFrame();
+            trailRenderer.emitting = true;
+        }
 
         public void SetSpeedAndDir(Vector3 dir, float speed)
         {
@@ -38,6 +54,7 @@ namespace Core
 
         private void CheckCollision(GameObject obj)
         {
+            if (obj.CompareTag("Projectile")) return;
             if (obj.TryGetComponent<Entity>(out var e))
             {
                 if (e.TakeDamage(_damageData))

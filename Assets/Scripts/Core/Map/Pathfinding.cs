@@ -7,10 +7,29 @@ namespace Core.Map
 {
     public class Pathfinding
     {
-        [Inject] private MapGrid _mapGrid;
+        private readonly MapGrid _mapGrid;
+
+        [Inject]
+        private Pathfinding(MapGrid mapGrid)
+        {
+            _mapGrid = mapGrid;
+        }
+
+        private Vector3 _raycastOffset = new (0, 0.25f, 0);
+        private readonly LayerMask _playerLayer = 1 << 6;
+        private readonly RaycastHit[] _results = new RaycastHit[3];
         
         public Vector3[] FindPath(Vector3 startWorldPosition, Vector3 targetWorldPosition)
         {
+            // Checking the direct path to the player
+            var ray = new Ray(
+                startWorldPosition + _raycastOffset, 
+                (targetWorldPosition - startWorldPosition).normalized);
+            if (Physics.RaycastNonAlloc(ray, _results, float.MaxValue, _playerLayer) == 1)
+            {
+                return new []{ targetWorldPosition };
+            }
+            
             var startCellPos = _mapGrid.GetCellPositionByWorldPosition(startWorldPosition);
             var targetCellPos = _mapGrid.GetCellPositionByWorldPosition(targetWorldPosition);
 
@@ -83,11 +102,23 @@ namespace Core.Map
         {
             var neighbors = new List<CellNode>();
             var nodeGridPos = node.GridPosition;
-            
-            if (nodeGridPos.x - 1 >= 0) neighbors.Add(_mapGrid.Grid[nodeGridPos.x - 1, nodeGridPos.y]);
-            if (nodeGridPos.x + 1 < _mapGrid.GridSizeX) neighbors.Add(_mapGrid.Grid[nodeGridPos.x + 1, nodeGridPos.y]);
+
             if (nodeGridPos.y - 1 >= 0) neighbors.Add(_mapGrid.Grid[nodeGridPos.x, nodeGridPos.y - 1]);
             if (nodeGridPos.y + 1 < _mapGrid.GridSizeY) neighbors.Add(_mapGrid.Grid[nodeGridPos.x, nodeGridPos.y + 1]);
+            
+            if (nodeGridPos.x - 1 >= 0)
+            {
+                if (nodeGridPos.y - 1 >= 0) neighbors.Add(_mapGrid.Grid[nodeGridPos.x - 1, nodeGridPos.y - 1]);
+                if (nodeGridPos.y + 1 < _mapGrid.GridSizeY) neighbors.Add(_mapGrid.Grid[nodeGridPos.x - 1, nodeGridPos.y + 1]);
+                neighbors.Add(_mapGrid.Grid[nodeGridPos.x - 1, nodeGridPos.y]);
+            }
+
+            if (nodeGridPos.x + 1 < _mapGrid.GridSizeX)
+            {
+                if (nodeGridPos.y - 1 >= 0) neighbors.Add(_mapGrid.Grid[nodeGridPos.x + 1, nodeGridPos.y - 1]);
+                if (nodeGridPos.y + 1 < _mapGrid.GridSizeY) neighbors.Add(_mapGrid.Grid[nodeGridPos.x + 1, nodeGridPos.y + 1]);
+                neighbors.Add(_mapGrid.Grid[nodeGridPos.x + 1, nodeGridPos.y]);
+            }
 
             return neighbors;
         }

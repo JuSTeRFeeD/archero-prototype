@@ -8,7 +8,7 @@ namespace Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<Pathfinding>().FromInstance(new Pathfinding()).AsSingle();
+            Container.Bind<Pathfinding>().FromNew().AsSingle();
         }
     }
 }

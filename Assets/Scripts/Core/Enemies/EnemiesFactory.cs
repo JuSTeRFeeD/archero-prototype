@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Core.Loot;
+using Core.Managers;
 using Core.Map;
 using Pooling;
 using UnityEngine;
@@ -12,22 +13,26 @@ namespace Core.Enemies
     [DisallowMultipleComponent]
     public class EnemiesFactory : MonoBehaviour
     {
+        [Inject] private GameStateManager _gameStateManager;
+        [Inject] private GameStats _gameStats;
         [Inject] private LootCoinsFactory _lootCoinsFactory;
-        [Inject] private MapGrid _mapGrid;
+        [Inject] private PlayerMovement _player;
         [Inject] private Pathfinding _pathfinding;
+        [Inject] private MapGrid _mapGrid;
         
         [Space]
-        [SerializeField] private List<Enemy> enemies = new ();
+        [SerializeField] private List<BasicEnemy> enemies = new ();
         [SerializeField] private int minEnemies = 2;
         [SerializeField] private int maxEnemies = 6;
         
-        private readonly List<Enemy> _spawnedEnemies = new ();
+        private readonly List<BasicEnemy> _spawnedEnemies = new ();
 
         public event Action OnEnemiesEliminated;
 
         private void Start()
         {
             SpawnNewEnemies();
+            _gameStateManager.OnUpdateRoom += SpawnNewEnemies;
         }
 
         public void SpawnNewEnemies()
@@ -44,7 +49,7 @@ namespace Core.Enemies
             {
                 var randomEnemy = enemies[Random.Range(0, enemies.Count)];
                 var enemy = PoolManager.Spawn(randomEnemy, spawnPosition, Quaternion.identity);
-                enemy.Setup(_pathfinding, _lootCoinsFactory);
+                enemy.Setup(_player.transform, _pathfinding, _lootCoinsFactory);
 
                 enemy.OnDeath += HandleEnemyDeath;
                 _spawnedEnemies.Add(enemy);
@@ -54,8 +59,10 @@ namespace Core.Enemies
         private void HandleEnemyDeath(Entity e)
         {
             e.OnDeath -= HandleEnemyDeath;
-            _spawnedEnemies.Remove(e as Enemy);
             
+            _gameStats.AddExp(10);
+            
+            _spawnedEnemies.Remove(e as BasicEnemy);
             if (_spawnedEnemies.Count == 0)
             {
                 OnEnemiesEliminated?.Invoke();
