@@ -35,6 +35,18 @@ namespace Core
             OnHealthChange = null;
         }
 
+        public void IncreaseMaxHealth(int value)
+        {
+            health += value;
+            OnHealthChange?.Invoke(this);
+        } 
+        
+        public void Heal(int value)
+        {
+            _currentHealth += value;
+            OnHealthChange?.Invoke(this);
+        }
+
         private void ResetHealth()
         {
             _currentHealth = health;

@@ -27,6 +27,9 @@ namespace Core
         [SerializeField] private int damage = 10;
         [SerializeField] private int projectileSpeed = 10;
 
+        public void IncreaseAttackDamage(int value) => damage += value;
+        public void IncreaseShootSpeed(float value) => attackCooldown -= value;
+        
         private void Start()
         {
             _playerMovement = GetComponent<PlayerMovement>();

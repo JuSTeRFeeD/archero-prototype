@@ -9,7 +9,7 @@ namespace Core
         private Rigidbody _rb;
 
         [Space]
-        public float movementSpeed = 2f;
+        [SerializeField] private float movementSpeed = 5f;
         private Vector3 _inputDir;
         
         private const float RotationSpeed = 1000f;
@@ -18,6 +18,8 @@ namespace Core
         private static readonly int IsWalkAnim = Animator.StringToHash("isWalk");
         
         public bool IsMoving() => joystick.Direction != Vector2.zero;
+
+        public void IncreaseMovementSpeed(float value) => movementSpeed += value;
         
         private void Start()
         {

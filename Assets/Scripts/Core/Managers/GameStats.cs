@@ -20,7 +20,7 @@ namespace Core.Managers
             CollectedCoins = 0;
             CurrentLevel = 1;
             CurrentExp = 0;
-            ToLevelUpExp = 30;
+            ToLevelUpExp = 30; // TODO: to global constants?
         }
 
         public void AddExp(int amount)
