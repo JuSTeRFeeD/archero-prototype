@@ -18,10 +18,6 @@ namespace Pooling
             Pool = pool;
             _isInitialized = true;
         }
-        
-        void IPoolItem.OnSpawn() { }
-
-        void IPoolItem.OnDespawn() { }
 
         private void OnDestroy()
         {
